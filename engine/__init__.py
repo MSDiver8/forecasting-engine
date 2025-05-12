@@ -1,3 +1,3 @@
-from .engine import Auto_real_forecast
+from .engine import Forecasting
 
-__all__ = ['Auto_real_forecast']
+__all__ = ['Forecasting']
