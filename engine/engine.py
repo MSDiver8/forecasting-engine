@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 import models
+import utils
 import pandas as pd
 
 class Forecasting:
@@ -27,7 +28,7 @@ class Forecasting:
                          Forecast_horizon: int) -> pd.DataFrame:
         '''Запускаем модель RW реального прогноза'''
         return models.RW_real_forecast(Data, Forecast_horizon)
-    
+    # дабвить вывод в виде дф с датой
     def RWD_real_forecast(Data: pd.DataFrame,
                           Forecast_horizon: int,
                           Frequency: str) -> pd.DataFrame:
@@ -99,3 +100,8 @@ class Forecasting:
         '''Запускаем модель ARIMA псевдовневыборочного прогноза'''
         return models.ps_ARIMA_forecast(Data, Deep_forecast_period, Forecast_horizon, Frequency)
     
+    # Функция Автоматического прогноза - Конструктор моделей
+    def Auto_forecast(Data: pd.DataFrame,
+                      Frequency: str) -> pd.DataFrame:
+        '''Запускаем автоматический прогноз "Конструктор моделей"'''
+        return utils.Auto_forecast(Data, Frequency)
