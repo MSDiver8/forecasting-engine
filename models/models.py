@@ -185,7 +185,7 @@ def RW_real_forecast(Data: pd.DataFrame,
         return(RW_forecast_list)
 def RWS_real_forecast(Data: pd.DataFrame,       
                       Forecast_horizon: int,
-                      Seasonality = int):
+                      Seasonality: int):
     
     if Seasonality < Forecast_horizon:
         raise Real_Forecast_Error('Seasonality < Forecast_horizon, Функция подходит только для горизонта прогноза не привышающего величину сезонного сдвига')
@@ -214,7 +214,7 @@ def RWD_real_forecast(Data: pd.DataFrame,
         return(RWD_forecast_list)
 def RWDS_real_forecast(Data: pd.DataFrame,
                   Forecast_horizon: int,
-                  Seasonality : int):
+                  Seasonality: int):
     
     if Seasonality < Forecast_horizon:
         raise Real_Forecast_Error('Seasonality < Forecast_horizon, Функция подходит только для горизонта прогноза не привышающего величину сезонного сдвига')
