@@ -4,7 +4,6 @@ import pmdarima as pmd
 
 from exceptions.exceptions import Real_Forecast_Error
 
-
 # Модели для псевдовневыборочного прогноза
 def ps_RW_forecast(Data: pd.DataFrame,
                    Deep_forecast_period: int,
