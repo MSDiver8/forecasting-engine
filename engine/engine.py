@@ -21,7 +21,8 @@ class Forecasting:
             'TS': ['df', 'Forecast_horizon'],
             'ARIMA': ['df', 'Forecast_horizon', 'Frequency']
         }
-   
+    
+    # Функция для построения реального прогноза
     def RW_real_forecast(Data: pd.DataFrame,
                          Forecast_horizon: int) -> pd.DataFrame:
         '''Запускаем модель RW реального прогноза'''
@@ -55,3 +56,46 @@ class Forecasting:
                             Frequency: str) -> pd.DataFrame:
         '''Запускаем модель ARIMA реального прогноза'''
         return models.ARIMA_real_forecast(Data, Forecast_horizon, Frequency)
+    
+    # Функции для построения псевдовневыборочного прогноза
+    def ps_RW_forecast(Data: pd.DataFrame,
+                       Deep_forecast_period: int,
+                       Forecast_horizon: int) -> pd.DataFrame:
+        '''Запускаем модель RW псевдовневыборочного прогноза'''
+        return models.ps_RW_forecast(Data, Deep_forecast_period, Forecast_horizon)
+    
+    def ps_RWD_forecast(Data: pd.DataFrame,
+                        Deep_forecast_period: int,
+                        Forecast_horizon: int,
+                        Frequency: str) -> pd.DataFrame:
+        '''Запускаем модель RWD псевдовневыборочного прогноза'''
+        return models.ps_RWD_forecast(Data, Deep_forecast_period, Forecast_horizon, Frequency)
+    
+    def ps_RWS_forecast(Data: pd.DataFrame,
+                        Deep_forecast_period: int,
+                        Forecast_horizon: int,
+                        Seasonality: int) -> pd.DataFrame:
+        '''Запускаем модель RWS псевдовневыборочного прогноза'''
+        return models.ps_RWS_forecast(Data, Deep_forecast_period, Forecast_horizon, Seasonality)
+    
+    def ps_RWDS_forecast(Data: pd.DataFrame,
+                         Deep_forecast_period: int,
+                         Forecast_horizon: int,
+                         Seasonality : int) -> pd.DataFrame:
+        '''Запускаем модель RWDS псевдовневыборочного прогноза'''
+        return models.ps_RWDS_forecast(Data, Deep_forecast_period, Forecast_horizon, Seasonality)
+    
+    def ps_TS_forecast(Data: pd.DataFrame,
+                       Deep_forecast_period: int,
+                       Forecast_horizon: int,
+                       ) -> pd.DataFrame:
+        '''Запускаем модель TS псевдовневыборочного прогноза'''
+        return models.ps_TS_forecast(Data, Deep_forecast_period, Forecast_horizon)
+    
+    def ps_ARIMA_forecast(Data: pd.DataFrame,
+                          Deep_forecast_period: int,
+                          Forecast_horizon: int,
+                          Frequency: str) -> pd.DataFrame:
+        '''Запускаем модель ARIMA псевдовневыборочного прогноза'''
+        return models.ps_ARIMA_forecast(Data, Deep_forecast_period, Forecast_horizon, Frequency)
+    
