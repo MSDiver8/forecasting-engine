@@ -2,7 +2,7 @@ from typing import List, Dict, Any
 import models
 import pandas as pd
 
-class Auto_real_forecast:
+class Forecasting:
     def __init__(self):
         self.available_models = {           # Словарь название модели : название ее функции
             'RW': models.RW_real_forecast,
@@ -24,8 +24,7 @@ class Auto_real_forecast:
 
 
     
-    def RW_real_forecast(Self,
-                         Data: pd.DataFrame,
+    def RW_real_forecast(Data: pd.DataFrame,
                          Forecast_horizon: int) -> pd.DataFrame:
         '''Запускаем модель RW реального прогноза'''
         return models.RW_real_forecast(Data, Forecast_horizon)
