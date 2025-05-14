@@ -51,17 +51,17 @@ def auto_params_selection(data: pd.DataFrame,
                             'deep_forecast_period_y': 6}
     ratio_deep_forcast_period_to_len = math.floor(0.4 * len(df)) # Отношение длины псевдовневыборочного прогноза к длине всего ряда. актуально для коротких рядов.
     if freq == 'M':
-        if ratio_deep_forcast_period_to_len > 12:
+        if ratio_deep_forcast_period_to_len > 24:
             dic_auto_params['Deep_forecast_period'] = deep_forecast_values['deep_forecast_period_m']
         else: 
             dic_auto_params['Deep_forecast_period'] = ratio_deep_forcast_period_to_len
     elif freq == 'Q':
-        if ratio_deep_forcast_period_to_len > 4:
+        if ratio_deep_forcast_period_to_len > 8:
             dic_auto_params['Deep_forecast_period'] = deep_forecast_values['deep_forecast_period_q']
         else: 
             dic_auto_params['Deep_forecast_period'] = ratio_deep_forcast_period_to_len
     elif freq == 'Y':
-        if ratio_deep_forcast_period_to_len > 3:
+        if ratio_deep_forcast_period_to_len > 6:
             dic_auto_params['Deep_forecast_period'] = deep_forecast_values['deep_forecast_period_y']
         else: 
             dic_auto_params['Deep_forecast_period'] = ratio_deep_forcast_period_to_len
@@ -175,7 +175,7 @@ def Psevdo_forecast_test_MAPE(Data: pd.DataFrame,
 
 # Функция Автоматического прогноза - Конструктор моделей
 def Auto_forecast(Data : pd.DataFrame,
-                  Freq : str):
+                  Frequency : str):
 
     # Создается 2 словоря available_models и model_args, это делается для оптимизации работы функции.
     # Для построени комбинированного по шагам прогноза будут задействованы только необходимые функции,
@@ -200,7 +200,7 @@ def Auto_forecast(Data : pd.DataFrame,
         'ARIMA': ['Data', 'Forecast_horizon', 'Frequency']
     }
     # dic_auto_params - Словарь с автоматически продобранными значениями базовых прогнозных функций. 
-    dic_auto_params = auto_params_selection(Data,Freq)
+    dic_auto_params = auto_params_selection(Data, Frequency)
 
     # List_of_model_number - Список с результатами по псевдовневыборочному тесту 
     # то есть, список моделей, которые участвуют в построение реального прогноза.
@@ -208,7 +208,7 @@ def Auto_forecast(Data : pd.DataFrame,
                                                      dic_auto_params['Deep_forecast_period'],
                                                      dic_auto_params['Forecast_horizon'],
                                                      dic_auto_params['Seasonality'],
-                                                     Freq)
+                                                     Frequency)
     
     # Конструирование реального прогноза по шагам прогнозирования. 
     Forecast, Model_name, Steps = [], [], []    # Для записи результатов
@@ -221,9 +221,9 @@ def Auto_forecast(Data : pd.DataFrame,
         # call_args - словарь, в который записывается название аргумента функции и
         # его значение. Это происходит только для той функции которая соответсвует итерации (List_of_model_number[i]).
         call_args = {
-            arg: (Data if arg == 'Data' else Freq if arg == 'Freq' else dic_auto_params[arg])
+            arg: (Data if arg == 'Data' else Frequency if arg == 'Frequency' else dic_auto_params[arg])
             for arg in required_args
-            if arg in ['Data', 'Freq'] or arg in dic_auto_params
+            if arg in ['Data', 'Frequency'] or arg in dic_auto_params
         }
         # Для записи результата прогноза вызывается нужная модель из списка List_of_model_number и
         # соотвесвующее номеру шага (горизонту прогнозирования) прогнозное значение.
@@ -235,7 +235,7 @@ def Auto_forecast(Data : pd.DataFrame,
     Data["date"] = pd.to_datetime(Data["date"], dayfirst=True, format="%d.%m.%Y")
     Date = pd.date_range(Data.iloc[-1,0] + (Data.iloc[-1,0] - Data.iloc[-2,0]),
                          periods = dic_auto_params['Forecast_horizon'],
-                         freq = Freq
+                         freq = Frequency
                          ).strftime('%d.%m.%Y').tolist()
     
     # Записываем итоговый результат в виде датафрейма
