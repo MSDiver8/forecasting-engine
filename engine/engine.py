@@ -4,24 +4,6 @@ import utils
 import pandas as pd
 
 class Forecasting:
-    def __init__(self):
-        self.available_models = {           # Словарь название модели : название ее функции
-            'RW': models.RW_real_forecast,
-            'RWS': models.RWS_real_forecast,
-            'RWD': models.RWD_real_forecast,
-            'RWDS': models.RWDS_real_forecast,
-            'TS': models.TS_real_forecast,
-            'ARIMA': models.ARIMA_real_forecast
-        }
-
-        self.model_args = {         # Словарь название модели : входные параметры ее функции
-            'RW': ['df', 'Forecast_horizon'],
-            'RWS': ['df', 'Forecast_horizon', 'Seasonality'],
-            'RWD': ['df', 'Forecast_horizon', 'Frequency'],
-            'RWDS': ['df', 'Forecast_horizon', 'Seasonality'],
-            'TS': ['df', 'Forecast_horizon'],
-            'ARIMA': ['df', 'Forecast_horizon', 'Frequency']
-        }
     
     # Функция для построения реального прогноза
     def RW_real_forecast(Data: pd.DataFrame,
@@ -100,8 +82,31 @@ class Forecasting:
         '''Запускаем модель ARIMA псевдовневыборочного прогноза'''
         return models.ps_ARIMA_forecast(Data, Deep_forecast_period, Forecast_horizon, Frequency)
     
-    # Функция Автоматического прогноза - Конструктор моделей
+    # Функции для обработки прогнозов
+    def auto_params_selection(data: pd.DataFrame,
+                              freq: str) -> dict:
+        '''Автоматический подбор параметров для моделей'''
+        return utils.auto_params_selection(data, freq)
+    
+    def MAPE_step_by_step(Data: pd.DataFrame,
+                          Dataframe_model: pd.DataFrame,
+                          Deep_forecast_period: int,
+                          Forecast_horizon: int) -> list:
+        '''Функция рассчета усредненных MAPE для каждого горизонта прогнозирования в отдельности для псевдовневыборочного прогноза'''
+        return utils.MAPE_step_by_step(Data, Dataframe_model, Deep_forecast_period, Forecast_horizon)
+    
+    def Psevdo_forecast_test_MAPE(Data: pd.DataFrame,
+                        Deep_forecast_period: int,
+                        Forecast_horizon: int,
+                        Seasonality : int,
+                        Frequency: str) -> list:
+        '''Функция определения минимального MAPE на каждом шаге и формирование списка с "лучшими" моделями для каждого шага прогнозирования'''
+        return utils.Psevdo_forecast_test_MAPE(Data, Deep_forecast_period, Forecast_horizon, Seasonality, Frequency)
+    
     def Auto_forecast(Data: pd.DataFrame,
                       Frequency: str) -> pd.DataFrame:
         '''Запускаем автоматический прогноз "Конструктор моделей"'''
         return utils.Auto_forecast(Data, Frequency)
+    
+
+        

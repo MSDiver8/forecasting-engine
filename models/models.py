@@ -139,9 +139,9 @@ def ps_TS_forecast(Data: pd.DataFrame,
     df = round(df,2)
     return(df)
 def ps_ARIMA_forecast(Data: pd.DataFrame,
-                   Deep_forecast_period: int,
-                   Forecast_horizon: int,
-                   Frequency: str):
+                      Deep_forecast_period: int,
+                      Forecast_horizon: int,
+                      Frequency: str):
     
     df = Data.copy()
     df.obs = df.obs.astype(float) # значения переводятся в формат float
