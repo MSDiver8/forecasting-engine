@@ -108,7 +108,7 @@ def MAPE_step_by_step(Data: pd.DataFrame,
                       Dataframe_model: pd.DataFrame,
                       Deep_forecast_period: int,
                       Forecast_horizon: int):
-    
+    '''Функция рассчета усредненных  MAPE для каждого горизонта прогнозирования в отдельности'''
     df_real = Data.copy()
     df_real.obs = df_real.obs.astype(float) 
     
@@ -123,8 +123,8 @@ def MAPE_step_by_step(Data: pd.DataFrame,
     
     
     Errors = []
-    for i in range(Forecast_horizon):       
-        Errors.append(round(math.sqrt(sm.mean_absolute_percentage_error(Real_Data_list[i], Model_Data_list[i])), 2))
+    for i in range(Forecast_horizon):        
+        Errors.append(round(sm.mean_absolute_percentage_error(Real_Data_list[i], Model_Data_list[i])), 2)
     
     return Errors
 
