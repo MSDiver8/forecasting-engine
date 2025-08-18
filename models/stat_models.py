@@ -191,7 +191,8 @@ def ps_TS_forecast(Data: pd.DataFrame,
 def ps_ARIMA_forecast(Data: pd.DataFrame,
                       Deep_forecast_period: int,
                       Forecast_horizon: int,
-                      Frequency: str):
+                      Frequency: str,
+                      Window_in_years: int = None):
     
     df = Data.copy()
     df.obs = df.obs.astype(float) # значения переводятся в формат float
@@ -203,14 +204,30 @@ def ps_ARIMA_forecast(Data: pd.DataFrame,
     quantity_pseudo_foracasts = Deep_forecast_period - Forecast_horizon + 1                 # количество псевдовневыборочных прогнозов
                                                                                
     forecast_table = []
-    for i in range(quantity_pseudo_foracasts):
-        forecast_table.append(pmd.auto_arima(df.obs[:base_period + i],
-                                             information_criterion = 'bic',
-                                             max_p = 5,
-                                             max_d = 2,
-                                             max_q = 5,
-                                             error_action="ignore",
-                                             stepwise=True).predict(Forecast_horizon).tolist())
+    
+    if Window_in_years == None or Window_in_years == 0:  
+        for i in range(quantity_pseudo_foracasts):
+            forecast_table.append(pmd.auto_arima(df.obs[:base_period + i],
+                                                 information_criterion = 'bic',
+                                                 max_p = 5,
+                                                 max_d = 2,
+                                                 max_q = 5,
+                                                 error_action="ignore",
+                                                 stepwise=True).predict(Forecast_horizon).tolist())
+    else:
+        # добавить для других частотностей
+        if Window_in_years < 2:
+            raise Psevdo_Forecast_Error('Окно слишком мало')
+        
+        window = 12 * Window_in_years
+        for i in range(quantity_pseudo_foracasts):
+            forecast_table.append(pmd.auto_arima(df.obs[base_period - window + i:base_period + i],
+                                                 information_criterion = 'bic',
+                                                 max_p = 5,
+                                                 max_d = 2,
+                                                 max_q = 5,
+                                                 error_action="ignore",
+                                                 stepwise=True).predict(Forecast_horizon).tolist())
     
     # групировка по шагам
     steps_table=[]
@@ -314,7 +331,6 @@ def TS_real_forecast(Data: pd.DataFrame,
         # добавить для других частотностей
         if Window_in_years < 2:
             raise Real_Forecast_Error('Окно слишком мало')
-        
         window = 12 * Window_in_years                                                                                    
         alpha = smf.ols('obs ~ T', data=df.iloc[ - window:,[1, 2]]).fit().params['Intercept']    # рассчитываем константу 1
         betta = smf.ols('obs ~ T', data=df.iloc[ - window:,[1, 2]]).fit().params['T']     # рассчитываем константу 2
@@ -323,8 +339,9 @@ def TS_real_forecast(Data: pd.DataFrame,
     
     return(forecast_list)
 def ARIMA_real_forecast(Data: pd.DataFrame,
-                      Forecast_horizon : int, 
-                      Frequency: str):
+                        Forecast_horizon : int, 
+                        Frequency: str,
+                        Window_in_years: int = None):
     
     df = Data.copy()
     df.obs = df.obs.astype(float) # значения переводятся в формат float
@@ -333,7 +350,15 @@ def ARIMA_real_forecast(Data: pd.DataFrame,
     df = df.drop('date', axis = 1)
     df = df.asfreq(Frequency) # Установка частотности  
     
-    ARIMA_forecast_list = pmd.auto_arima(df.obs, information_criterion = 'bic', d = 1, stepwise=True).predict(Forecast_horizon).to_list()
-    ARIMA_forecast_list = [round(num ,2) for num in ARIMA_forecast_list]
+    if Window_in_years == None or Window_in_years == 0: 
+        ARIMA_forecast_list = pmd.auto_arima(df.obs, information_criterion = 'bic', d = 1, stepwise=True).predict(Forecast_horizon).to_list()
+        ARIMA_forecast_list = [round(num ,2) for num in ARIMA_forecast_list]
+    else:
+        # добавить для других частотностей
+        if Window_in_years < 2:
+            raise Real_Forecast_Error('Окно слишком мало')
+        window = 12 * Window_in_years 
+        ARIMA_forecast_list = pmd.auto_arima(df.obs[-window:], information_criterion = 'bic', d = 1, stepwise=True).predict(Forecast_horizon).to_list()
+        ARIMA_forecast_list = [round(num ,2) for num in ARIMA_forecast_list]
     
     return ARIMA_forecast_list

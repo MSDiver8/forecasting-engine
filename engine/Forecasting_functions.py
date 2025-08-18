@@ -38,9 +38,10 @@ class Forecasting:
     
     def ARIMA_real_forecast(Data: pd.DataFrame,
                             Forecast_horizon: int,
-                            Frequency: str) -> pd.DataFrame:
+                            Frequency: str,
+                            Window_in_years: int = None) -> pd.DataFrame:
         '''Запускаем модель ARIMA реального прогноза'''
-        return models.ARIMA_real_forecast(Data, Forecast_horizon, Frequency)
+        return models.ARIMA_real_forecast(Data, Forecast_horizon, Frequency, Window_in_years)
     
     # Функции для построения псевдовневыборочного прогноза
     def ps_RW_forecast(Data: pd.DataFrame,
@@ -82,9 +83,10 @@ class Forecasting:
     def ps_ARIMA_forecast(Data: pd.DataFrame,
                           Deep_forecast_period: int,
                           Forecast_horizon: int,
-                          Frequency: str) -> pd.DataFrame:
+                          Frequency: str,
+                          Window_in_years: int = None) -> pd.DataFrame:
         '''Запускаем модель ARIMA псевдовневыборочного прогноза'''
-        return models.ps_ARIMA_forecast(Data, Deep_forecast_period, Forecast_horizon, Frequency)
+        return models.ps_ARIMA_forecast(Data, Deep_forecast_period, Forecast_horizon, Frequency, Window_in_years)
     
     # Функции для обработки прогнозов
     def auto_params_selection(data: pd.DataFrame,
