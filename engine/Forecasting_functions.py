@@ -50,7 +50,6 @@ class Forecasting:
     def ps_RWD_forecast(Data: pd.DataFrame,
                         Deep_forecast_period: int,
                         Forecast_horizon: int,
-                        #Frequency: str,
                         Window_in_years: int=None) -> pd.DataFrame:
         '''Запускаем модель RWD псевдовневыборочного прогноза'''
         return models.ps_RWD_forecast(Data, Deep_forecast_period, Forecast_horizon, Window_in_years)

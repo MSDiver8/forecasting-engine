@@ -68,9 +68,8 @@ def ps_RWD_forecast(Data: pd.DataFrame,
         if Window_in_years == None or Window_in_years == 0:                                                                             
             forecast_table = []
             for i in range(quantity_pseudo_foracasts):
-                    #const_RWD_r = sma.ARIMA(df['obs'][:base_period + i], order=(0, 1, 0), enforce_stationarity=False).fit().params.const     # рассчитываем константу смещения, для каждого нового момента прогнозирования она переоценивается. 
-                    const_RWD_r = df['obs'].diff().mean().round(2)
-                    forecast_table.append([df.iloc[base_period - 1 + i, 0] + (j + 1) * const_RWD_r for j in range(Forecast_horizon)])                         # формула модели RWD, заполняется масив для каждого момента прогнозирования. Затем это записывается в общий масив прогнозов.
+                    const_RWD_r = df['obs'].diff().mean()
+                    forecast_table.append([round(df.iloc[base_period - 1 + i, 0] + (j + 1) * const_RWD_r, 2) for j in range(Forecast_horizon)])                         # формула модели RWD, заполняется масив для каждого момента прогнозирования. Затем это записывается в общий масив прогнозов.
         
         # скользящее окно       
         else:                                                                                                          
@@ -80,8 +79,8 @@ def ps_RWD_forecast(Data: pd.DataFrame,
             window = 12 * Window_in_years                                                                                    
             forecast_table = []      
             for i in range(quantity_pseudo_foracasts):
-                    const_RWD_w = df['obs'][base_period - window + i:base_period + i].diff().mean().round(2)
-                    forecast_table.append([df.iloc[base_period - 1 + i, 0] + (j + 1) * const_RWD_w for j in range(Forecast_horizon)])
+                    const_RWD_w = df['obs'][base_period - window + i:base_period + i].diff().mean()
+                    forecast_table.append([round(df.iloc[base_period - 1 + i, 0] + (j + 1) * const_RWD_w, 2) for j in range(Forecast_horizon)])
                    
                    
         
@@ -210,8 +209,9 @@ def RWS_real_forecast(Data: pd.DataFrame,
     
     return(RWS_forecast_list)
 def RWD_real_forecast(Data: pd.DataFrame,
-                 Forecast_horizon: int,
-                 ):
+                      Forecast_horizon: int,
+                      Window_in_years: int = None
+                     ):
     
         df = Data.copy()
         df.obs = df.obs.astype(float) # значения переводятся в формат float
@@ -219,10 +219,17 @@ def RWD_real_forecast(Data: pd.DataFrame,
         df.index = df['date'] # Индекс дата
         df = df.drop('date', axis = 1)
                                                                          
-        
-        #const_RWD_r = sma.ARIMA(df['obs'], order=(0, 1, 0), enforce_stationarity=False).fit().params.const.round(2)     # рассчитываем константу на всей выборке
-        const_RWD_r = df['obs'].diff().mean().round(2)
-        RWD_forecast_list = [df.iloc[-1, 0] + (j + 1) * const_RWD_r for j in range(Forecast_horizon)]    # формула модели RWD
+        # рекурсивный
+        if Window_in_years == None or Window_in_years == 0:      
+            const_RWD_r = df['obs'].diff().mean()
+            RWD_forecast_list = [round(df.iloc[-1, 0] + (j + 1) * const_RWD_r, 2) for j in range(Forecast_horizon)]    # формула модели RWD
+        # скользящее окно       
+        else:                                                                                                          
+            if Window_in_years < 2:
+                return print('слишком маленькое окно')
+            window = 12 * Window_in_years 
+            const_RWD_w = df['obs'][ - window:].diff().mean() # оценка константы происходит только на последних известных значениях попадающих в окно
+            RWD_forecast_list = [round(df.iloc[-1, 0] + (j + 1) * const_RWD_w, 2) for j in range(Forecast_horizon)] 
         
         return(RWD_forecast_list)
 def RWDS_real_forecast(Data: pd.DataFrame,
