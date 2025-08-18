@@ -13,9 +13,9 @@ class Forecasting:
     # дабвить вывод в виде дф с датой
     def RWD_real_forecast(Data: pd.DataFrame,
                           Forecast_horizon: int,
-                          Frequency: str) -> pd.DataFrame:
+                          Window_in_years: int=None) -> pd.DataFrame:
         '''Запускаем модель RWD реального прогноза'''
-        return models.RWD_real_forecast(Data, Forecast_horizon, Frequency)
+        return models.RWD_real_forecast(Data, Forecast_horizon, Window_in_years)
     
     def RWS_real_forecast(Data: pd.DataFrame,
                           Forecast_horizon: int,
@@ -51,7 +51,7 @@ class Forecasting:
                         Deep_forecast_period: int,
                         Forecast_horizon: int,
                         #Frequency: str,
-                        Window_in_years: int) -> pd.DataFrame:
+                        Window_in_years: int=None) -> pd.DataFrame:
         '''Запускаем модель RWD псевдовневыборочного прогноза'''
         return models.ps_RWD_forecast(Data, Deep_forecast_period, Forecast_horizon, Window_in_years)
     

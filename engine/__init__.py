@@ -1,3 +1,3 @@
-from .engine import Forecasting
+from engine.Forecasting_functions import Forecasting
 
 __all__ = ['Forecasting']

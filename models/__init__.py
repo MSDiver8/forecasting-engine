@@ -1,4 +1,4 @@
-from .models import (
+from models.stat_models import (
     ps_RW_forecast,
     ps_RWS_forecast,
     ps_RWD_forecast,

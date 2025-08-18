@@ -4,9 +4,9 @@ import sklearn.metrics as sm
 
 from exceptions.exceptions import Auto_params_selection_Error
 
-from models.models import ps_RW_forecast, ps_RWD_forecast, ps_RWS_forecast, ps_RWDS_forecast, ps_TS_forecast, ps_ARIMA_forecast
+from models.stat_models import ps_RW_forecast, ps_RWD_forecast, ps_RWS_forecast, ps_RWDS_forecast, ps_TS_forecast, ps_ARIMA_forecast
 
-from models.models import RW_real_forecast, RWD_real_forecast, RWS_real_forecast, RWDS_real_forecast, TS_real_forecast, ARIMA_real_forecast
+from models.stat_models import RW_real_forecast, RWD_real_forecast, RWS_real_forecast, RWDS_real_forecast, TS_real_forecast, ARIMA_real_forecast
 
 # Фукция автоматического подбора параметров для базовых моделей
 def auto_params_selection(data: pd.DataFrame,

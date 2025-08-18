@@ -52,8 +52,7 @@ def ps_RWS_forecast(Data: pd.DataFrame,
 def ps_RWD_forecast(Data: pd.DataFrame,
                     Deep_forecast_period: int,
                     Forecast_horizon: int,
-                    Frequency: str,
-                    Window_in_years: int
+                    Window_in_years: int = None
                     ):
         '''Преобразовываем dataframe в формат, подходящий для библиотеки statsmodel'''
         df = Data.copy()
@@ -61,7 +60,7 @@ def ps_RWD_forecast(Data: pd.DataFrame,
         df["date"] = pd.to_datetime(df["date"], dayfirst=True, format="%d.%m.%Y")
         df.index = df['date'] # Индекс дата
         df = df.drop('date', axis = 1)
-        df = df.asfreq(Frequency) # Установка частотности
+        #df = df.asfreq(Frequency) # Установка частотности
         base_period =  len(df['obs']) - Deep_forecast_period  
         quantity_pseudo_foracasts = Deep_forecast_period - Forecast_horizon + 1                 # количество псевдовневыборочных прогнозов
 
@@ -82,8 +81,9 @@ def ps_RWD_forecast(Data: pd.DataFrame,
             forecast_table = []      
             for i in range(quantity_pseudo_foracasts):
                     const_RWD_w = df['obs'][base_period - window + i:base_period + i].diff().mean().round(2)
-                    forecast_table.append(df['obs'][base_period - 1 + i] + (j + 1) * const_RWD_w for j in range(Forecast_horizon))
-    
+                    forecast_table.append([df.iloc[base_period - 1 + i, 0] + (j + 1) * const_RWD_w for j in range(Forecast_horizon)])
+                   
+                   
         
         # групировка по шагам
         steps_table=[]
@@ -211,14 +211,14 @@ def RWS_real_forecast(Data: pd.DataFrame,
     return(RWS_forecast_list)
 def RWD_real_forecast(Data: pd.DataFrame,
                  Forecast_horizon: int,
-                 Frequency: str):
+                 ):
     
         df = Data.copy()
         df.obs = df.obs.astype(float) # значения переводятся в формат float
         df["date"] = pd.to_datetime(df["date"], dayfirst=True, format="%d.%m.%Y")
         df.index = df['date'] # Индекс дата
         df = df.drop('date', axis = 1)
-        df = df.asfreq(Frequency) # Установка частотности                                                                       
+                                                                         
         
         #const_RWD_r = sma.ARIMA(df['obs'], order=(0, 1, 0), enforce_stationarity=False).fit().params.const.round(2)     # рассчитываем константу на всей выборке
         const_RWD_r = df['obs'].diff().mean().round(2)
