@@ -25,14 +25,16 @@ class Forecasting:
     
     def RWDS_real_forecast(Data: pd.DataFrame,
                            Forecast_horizon: int,
-                           Seasonality: int) -> pd.DataFrame:
+                           Seasonality: int = None,
+                           Window_in_years: int = None) -> pd.DataFrame:
         '''Запускаем модель RWDS реального прогноза'''
-        return models.RWDS_real_forecast(Data, Forecast_horizon, Seasonality)
+        return models.RWDS_real_forecast(Data, Forecast_horizon, Seasonality, Window_in_years)
     
     def TS_real_forecast(Data: pd.DataFrame,
-                         Forecast_horizon: int) -> pd.DataFrame:
+                         Forecast_horizon: int,
+                         Window_in_years: int = None) -> pd.DataFrame:
         '''Запускаем модель TS реального прогноза'''
-        return models.TS_real_forecast(Data, Forecast_horizon)
+        return models.TS_real_forecast(Data, Forecast_horizon, Window_in_years)
     
     def ARIMA_real_forecast(Data: pd.DataFrame,
                             Forecast_horizon: int,
@@ -64,16 +66,18 @@ class Forecasting:
     def ps_RWDS_forecast(Data: pd.DataFrame,
                          Deep_forecast_period: int,
                          Forecast_horizon: int,
-                         Seasonality : int) -> pd.DataFrame:
+                         Seasonality : int = None,
+                         Window_in_years: int = None) -> pd.DataFrame:
         '''Запускаем модель RWDS псевдовневыборочного прогноза'''
-        return models.ps_RWDS_forecast(Data, Deep_forecast_period, Forecast_horizon, Seasonality)
+        return models.ps_RWDS_forecast(Data, Deep_forecast_period, Forecast_horizon, Seasonality, Window_in_years)
     
     def ps_TS_forecast(Data: pd.DataFrame,
                        Deep_forecast_period: int,
                        Forecast_horizon: int,
+                       Window_in_years: int = None
                        ) -> pd.DataFrame:
         '''Запускаем модель TS псевдовневыборочного прогноза'''
-        return models.ps_TS_forecast(Data, Deep_forecast_period, Forecast_horizon)
+        return models.ps_TS_forecast(Data, Deep_forecast_period, Forecast_horizon, Window_in_years)
     
     def ps_ARIMA_forecast(Data: pd.DataFrame,
                           Deep_forecast_period: int,
