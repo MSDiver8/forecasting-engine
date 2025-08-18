@@ -52,7 +52,8 @@ def ps_RWS_forecast(Data: pd.DataFrame,
 def ps_RWD_forecast(Data: pd.DataFrame,
                     Deep_forecast_period: int,
                     Forecast_horizon: int,
-                    Frequency: str
+                    Frequency: str,
+                    Window_in_years: int
                     ):
         '''Преобразовываем dataframe в формат, подходящий для библиотеки statsmodel'''
         df = Data.copy()
@@ -64,13 +65,25 @@ def ps_RWD_forecast(Data: pd.DataFrame,
         base_period =  len(df['obs']) - Deep_forecast_period  
         quantity_pseudo_foracasts = Deep_forecast_period - Forecast_horizon + 1                 # количество псевдовневыборочных прогнозов
 
-        # составление двумерного массива прогнозов                                                                             
-        forecast_table = []
-        for i in range(quantity_pseudo_foracasts):
-                #const_RWD_r = sma.ARIMA(df['obs'][:base_period + i], order=(0, 1, 0), enforce_stationarity=False).fit().params.const     # рассчитываем константу смещения, для каждого нового момента прогнозирования она переоценивается. 
-                const_RWD_r = df['obs'].diff().mean().round(2)
-                forecast_table.append([df.iloc[base_period - 1 + i, 0] + (j + 1) * const_RWD_r for j in range(Forecast_horizon)])                         # формула модели RWD, заполняется масив для каждого момента прогнозирования. Затем это записывается в общий масив прогнозов.
+        # составление двумерного массива ркурсивного прогноза 
+        if Window_in_years == None or Window_in_years == 0:                                                                             
+            forecast_table = []
+            for i in range(quantity_pseudo_foracasts):
+                    #const_RWD_r = sma.ARIMA(df['obs'][:base_period + i], order=(0, 1, 0), enforce_stationarity=False).fit().params.const     # рассчитываем константу смещения, для каждого нового момента прогнозирования она переоценивается. 
+                    const_RWD_r = df['obs'].diff().mean().round(2)
+                    forecast_table.append([df.iloc[base_period - 1 + i, 0] + (j + 1) * const_RWD_r for j in range(Forecast_horizon)])                         # формула модели RWD, заполняется масив для каждого момента прогнозирования. Затем это записывается в общий масив прогнозов.
         
+        # скользящее окно       
+        else:                                                                                                          
+            if Window_in_years < 2:
+                return print('слишком маленькое окно')
+
+            window = 12 * Window_in_years                                                                                    
+            forecast_table = []      
+            for i in range(quantity_pseudo_foracasts):
+                    const_RWD_w = df['obs'][base_period - window + i:base_period + i].diff().mean().round(2)
+                    forecast_table.append(df['obs'][base_period - 1 + i] + (j + 1) * const_RWD_w for j in range(Forecast_horizon))
+    
         
         # групировка по шагам
         steps_table=[]
